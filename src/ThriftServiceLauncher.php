@@ -21,16 +21,10 @@ class ThriftServiceLauncher
         if ($pos = strpos($uri, '?')) {
             $uri = substr($uri, 0, $pos);
         }
-        ///service-order/list => ServiceOrderListImpl
+        ///service-order/listService => service\order\ListServiceImpl
         list(, $service_name, $module_name) = explode('/', $uri);
         $namespace = preg_replace('/-/', '\\', $service_name) . '\\';
-        $impl = $namespace . preg_replace(
-            '/-/',
-            '',
-            preg_replace_callback('/([a-zA-Z]+)/', function ($matches) {
-                    return ucfirst($matches[0]);
-            }, $service_name)
-        ) . ucfirst($module_name) . 'Impl';
+        $impl = $namespace . ucfirst($module_name) . 'Impl';
 
         try {
             $processor = new ThriftServiceProcessor(new $impl(), $namespace . ucfirst($module_name));
