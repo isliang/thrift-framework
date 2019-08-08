@@ -1,0 +1,23 @@
+{
+  "name": "isliang/thrift-framework",
+  "description": "a simple framework of thrift for php",
+  "version": "0.0.1",
+  "type": "library",
+  "keywords": ["thrift","framework","php"],
+  "license": ["Apache-2.0"],
+  "authors": [
+    {
+      "name":"yesuhuangsi",
+      "email": "yesuhuangsi@163.com",
+      "homepage": "https://github.com/isliang",
+      "role": "Owner"
+    }
+  ],
+  "autoload": {
+    "psr-4": {"Isliang\\Thrift\\Framework\\": "src/" }
+  },
+  "require": {
+    "apache/thrift": "0.9.*",
+    "php": "^7.0"
+  }
+}
