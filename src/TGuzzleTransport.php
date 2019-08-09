@@ -89,6 +89,7 @@ class TGuzzleTransport extends TTransport
     public function async()
     {
         $request = implode('', $this->request);
+        $this->request = [];
 
         $headers = [
             'Accept: application/x-thrift',
@@ -97,7 +98,7 @@ class TGuzzleTransport extends TTransport
         ];
         $host = $this->host.($this->port != 80 ? ':'.$this->port : '');
         $fullUrl = $this->scheme."://".$host.$this->uri;
-        $guzzle_request = new Request('GET', $fullUrl, [], $request);
+        $guzzle_request = new Request('POST', $fullUrl, [], $request);
         $options = [
             'headers' => $headers,
         ];
