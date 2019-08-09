@@ -10,6 +10,7 @@ namespace Isliang\Thrift\Framework;
 
 use Thrift\Exception\TApplicationException;
 use Thrift\Protocol\TBinaryProtocol;
+use Thrift\Transport\TMemoryBuffer;
 use Thrift\Type\TMessageType;
 
 class ThriftPromiseProxy
@@ -55,7 +56,7 @@ class ThriftPromiseProxy
                 $rseqid = 0;
                 $fname = null;
                 $mtype = 0;
-                $input = new TBinaryProtocol(new TFastMemoryBuffer($body));
+                $input = new TBinaryProtocol(new TMemoryBuffer($body));
                 if (function_exists('thrift_protocol_read_binary')) {
                     $result = thrift_protocol_read_binary($input, $result_name, $input->isStrictRead());
                 } else {
