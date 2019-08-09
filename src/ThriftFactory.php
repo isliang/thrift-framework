@@ -14,6 +14,8 @@ use Thrift\Protocol\TBinaryProtocol;
 
 class ThriftFactory
 {
+    private static $sync_service = [];
+    private static $async_service = [];
     /**
      * @param $endpoint
      * @param $classname
@@ -24,6 +26,10 @@ class ThriftFactory
     {
         if ('If' === substr($classname, -2)) {
             $classname = substr($classname, 0, -2);
+        }
+
+        if (!empty(self::$sync_service[$classname])) {
+            return self::$sync_service[$classname];
         }
         $class_arr = explode('\\', trim($classname, '\\'));
         $module_name = lcfirst(end($class_arr));
@@ -37,6 +43,34 @@ class ThriftFactory
         $protocol = new TBinaryProtocol($transport);
         $client = new $client_name($protocol);
         $proxy = new ThriftProxy($client);
+
+        self::$sync_service[$classname] = $proxy;
+
+        return $proxy;
+    }
+
+
+    public static function getAsyncService($endpoint, $classname)
+    {
+        if ('If' === substr($classname, -2)) {
+            $classname = substr($classname, 0, -2);
+        }
+
+        if (!empty(self::$async_service[$classname])) {
+            return self::$async_service[$classname];
+        }
+
+        $class_arr = explode('\\', trim($classname, '\\'));
+        $module_name = lcfirst(end($class_arr));
+        $class_arr = array_slice($class_arr, 0, -1);
+        $service_name = implode('-', $class_arr);
+        $uri = '/' . $service_name . '/' . $module_name;
+
+        $socket = new TGuzzleTransport($endpoint['host'], $endpoint['port'], $uri);
+        $proxy = new ThriftPromiseProxy($socket, $classname);
+
+        self::$async_service[$classname] = $proxy;
+
         return $proxy;
     }
 }

@@ -18,6 +18,13 @@
   },
   "require": {
     "apache/thrift": "0.9.*",
-    "php": "^7.0"
+    "php": "^7.0",
+    "guzzlehttp/guzzle": "~6.0"
+  },
+  "repositories": {
+    "packagist": {
+      "type": "composer",
+      "url": "https://packagist.phpcomposer.com"
+    }
   }
 }
