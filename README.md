@@ -14,12 +14,11 @@
         - composer.json
         - xxx.thrift    
     - implement
-        - class
+        - classes
         - composer.json
         - index.php
     - Framework
         - src
             - ThriftServiceLauncher.php:负责微服务服务端的启动
-            - ThriftServiceProcessor.php
             - ThriftFactory.php:负责发起微服务请求
         - composer.json

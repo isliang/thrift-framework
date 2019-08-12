@@ -50,6 +50,12 @@ class ThriftFactory
     }
 
 
+    /**
+     * @param $endpoint
+     * @param $classname
+     * @return ThriftPromiseProxy|mixed
+     * 使用guzzle，支持异步
+     */
     public static function getAsyncService($endpoint, $classname)
     {
         if ('If' === substr($classname, -2)) {
