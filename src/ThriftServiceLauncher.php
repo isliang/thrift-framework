@@ -25,16 +25,11 @@ class ThriftServiceLauncher
         list(, $service_name, $module_name) = explode('/', $uri);
         $namespace = preg_replace('/-/', '\\', $service_name) . '\\';
         $impl = $namespace . ucfirst($module_name) . 'Impl';
-
-        try {
-            $processor = new ThriftServiceProcessor(new $impl(), $namespace . ucfirst($module_name));
-            $transport = new TBufferedTransport(new TPhpStream(TPhpStream::MODE_R | TPhpStream::MODE_W));
-            $protocol = new TBinaryProtocol($transport, true, true);
-            $transport->open();
-            $processor->process($protocol, $protocol);
-            $transport->close();
-        } catch (\Exception $e) {
-        } finally {
-        }
+        $processor = new ThriftServiceProcessor(new $impl(), $namespace . ucfirst($module_name));
+        $transport = new TBufferedTransport(new TPhpStream(TPhpStream::MODE_R | TPhpStream::MODE_W));
+        $protocol = new TBinaryProtocol($transport, true, true);
+        $transport->open();
+        $processor->process($protocol, $protocol);
+        $transport->close();
     }
 }

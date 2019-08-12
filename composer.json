@@ -19,7 +19,8 @@
   "require": {
     "apache/thrift": "0.9.*",
     "php": "^7.0",
-    "guzzlehttp/guzzle": "~6.0"
+    "guzzlehttp/guzzle": "~6.0",
+    "monolog/monolog": "^1.0"
   },
   "repositories": {
     "packagist": {

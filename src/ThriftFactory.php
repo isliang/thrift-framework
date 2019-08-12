@@ -42,7 +42,7 @@ class ThriftFactory
         $transport = new TBufferedTransport($socket, 1024, 1024);
         $protocol = new TBinaryProtocol($transport);
         $client = new $client_name($protocol);
-        $proxy = new ThriftProxy($client);
+        $proxy = new ThriftProxy($client, $classname);
 
         self::$sync_service[$classname] = $proxy;
 

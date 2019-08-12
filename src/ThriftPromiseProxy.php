@@ -8,6 +8,8 @@
 
 namespace Isliang\Thrift\Framework;
 
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
 use Thrift\Exception\TApplicationException;
 use Thrift\Protocol\TBinaryProtocol;
 use Thrift\Transport\TMemoryBuffer;
@@ -20,24 +22,33 @@ class ThriftPromiseProxy
      */
     private $transport;
 
-    private $module_name;
+    private $classname;
 
-    public function __construct($transport, $module_name)
+    private static $logger;
+
+    public function __construct($transport, $classname)
     {
         $this->transport = $transport;
-        $this->module_name = $module_name;
+        $this->classname = $classname;
+        if (empty(self::$logger)) {
+            self::$logger = new Logger('THRIFT-SERVICE');
+            self::$logger->pushHandler(new StreamHandler(Config::getLogFile(), Logger::INFO));
+        }
     }
 
     //返回promise
     public function __call($name, $arguments)
     {
-        $reflection = new \ReflectionMethod($this->module_name . 'If', $name);
+        $start = microtime(true);
+
+        self::$logger->info($this->classname . ".{$name}\tstart request");
+        $reflection = new \ReflectionMethod($this->classname . 'If', $name);
         $params = array_map(function ($p) {
             return $p->name;
         }, $reflection->getParameters());
 
-        $args_name = $this->module_name . '_' . $name . '_args';
-        $result_name = $this->module_name . '_' . $name . '_result';
+        $args_name = $this->classname . '_' . $name . '_args';
+        $result_name = $this->classname . '_' . $name . '_result';
 
 
         $argsObj = new $args_name(array_combine($params, $arguments));
@@ -77,6 +88,16 @@ class ThriftPromiseProxy
                 } else {
                     throw new \Exception(" failed: unknown result");
                 }
+            }
+        );
+
+        //记录请求结束日志
+        $promise->then(
+            function ($value) use ($name, $start) {
+                $used_time = number_format((microtime(true) - $start)*1000,
+                    2, '.', '');
+                self::$logger->info($this->classname . ".{$name}\treceive response\tused_time $used_time");
+                return $value;
             }
         );
 

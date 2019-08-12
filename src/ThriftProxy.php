@@ -8,17 +8,38 @@
 
 namespace Isliang\Thrift\Framework;
 
+use Monolog\Handler\StreamHandler;
+use Monolog\Logger;
+
 class ThriftProxy
 {
     protected $instance;
+    private $classname;
+    private static $logger;
 
-    public function __construct($instance)
+    public function __construct($instance, $classname)
     {
         $this->instance = $instance;
+        $this->classname = $classname;
+        if (empty(self::$logger)) {
+            self::$logger = new Logger('THRIFT-SERVICE');
+            self::$logger->pushHandler(new StreamHandler(Config::getLogFile(), Logger::INFO));
+        }
     }
 
     public function __call($name, $arguments)
     {
-        return call_user_func_array([$this->instance, $name], $arguments);
+        try {
+            $start = microtime(true);
+            self::$logger->info($this->classname . ".{$name}\tstart request");
+            $result = call_user_func_array([$this->instance, $name], $arguments);
+            $used_time = number_format((microtime(true) - $start)*1000,
+                2, '.', '');
+            self::$logger->info($this->classname . ".{$name}\treceive response\tused_time $used_time");
+            return $result;
+        } catch (\Exception $e) {
+            self::$logger->warning($this->classname . ".$name error," . $e->getMessage() . ',' . $e->getMessage());
+            throw $e;
+        }
     }
 }
