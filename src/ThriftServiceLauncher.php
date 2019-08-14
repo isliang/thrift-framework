@@ -28,6 +28,7 @@ class ThriftServiceLauncher
         $processor = new ThriftServiceProcessor(new $impl(), $namespace . ucfirst($module_name));
         $transport = new TBufferedTransport(new TPhpStream(TPhpStream::MODE_R | TPhpStream::MODE_W));
         $protocol = new TBinaryProtocol($transport, true, true);
+//        header('Content-Type', 'application/x-thrift');
         $transport->open();
         $processor->process($protocol, $protocol);
         $transport->close();
