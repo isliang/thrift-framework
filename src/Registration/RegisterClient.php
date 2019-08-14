@@ -22,6 +22,7 @@ class RegisterClient
     public function __construct($etcd_server)
     {
         $this->etcd_client = new Client($etcd_server);
+        $this->etcd_client->setRoot('service');
     }
 
     /**

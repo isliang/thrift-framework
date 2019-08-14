@@ -7,34 +7,25 @@
  */
 namespace Isliang\Thrift\Framework;
 
+use Isliang\Thrift\Framework\Request\RequestFactory;
+use Isliang\Thrift\Framework\Response\ResponseFactory;
+use Isliang\Thrift\Framework\Transport\TSwooleTransport;
+use Swoole\Http\Request;
+use Swoole\Http\Response;
 use Thrift\Transport\TBufferedTransport;
-use Thrift\Transport\TPhpStream;
 use Thrift\Protocol\TBinaryProtocol;
 
 class ThriftServiceLauncher
 {
     /**
-     * for fpm
+     * @param $req Request
+     * @param $resp Response
      */
-    public function run()
+    public function handle($req, $resp)
     {
-        list($impl, $namespace, $module_name) = $this->getHandleClass();
-        $processor = new ThriftServiceProcessor(new $impl(), $namespace . ucfirst($module_name));
-        $transport = new TBufferedTransport(new TPhpStream(TPhpStream::MODE_R | TPhpStream::MODE_W));
-        $protocol = new TBinaryProtocol($transport, true, true);
-        header('Content-Type', 'application/x-thrift');
-        $transport->open();
-        $processor->process($protocol, $protocol);
-        $transport->close();
-    }
+        $request = RequestFactory::getRequest($req);
+        $response = ResponseFactory::getResponse($resp);
 
-    /**
-     * @param $request
-     * @param $response
-     * for swoole
-     */
-    public function handle($request, $response)
-    {
         list($impl, $namespace, $module_name) = $this->getHandleClass();
         $processor = new ThriftServiceProcessor(new $impl(), $namespace . ucfirst($module_name));
         $transport = new TBufferedTransport(new TSwooleTransport($request, $response));

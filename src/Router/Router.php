@@ -9,7 +9,7 @@
 namespace Isliang\Thrift\Framework\Router;
 
 use FastRoute;
-use Isliang\Thrift\Framework\Controller\ThriftController;
+use Isliang\Thrift\Framework\Controller\SwooleThriftController;
 use Isliang\Thrift\Framework\Exception\ClassNotFoundException;
 use Isliang\Thrift\Framework\Exception\MethodNotExistException;
 use Swoole\Http\Request;
@@ -56,7 +56,7 @@ class Router
                 call_user_func_array([new $class($request, $response), $handler], []);
                 break;
             default:
-                call_user_func_array([new ThriftController($request, $response), 'handle'], []);
+                call_user_func_array([new SwooleThriftController($request, $response), 'handle'], []);
         }
     }
 }

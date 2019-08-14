@@ -6,7 +6,14 @@
  * Time: 16:38
  */
 
-require_once dirname(__DIR__) . "/autoload.php";
+$loader = __DIR__ . '/../vendor/autoload.php';
+
+if (!file_exists($loader)) {
+    $loader = __DIR__ . '/../../../autoload.php';
+}
+
+require_once $loader;
+
 use \Isliang\Thrift\Framework\Config\RegisterConfig;
 use \Isliang\Thrift\Framework\ThriftHttpServer;
 

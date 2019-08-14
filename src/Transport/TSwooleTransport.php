@@ -6,7 +6,7 @@
  * Time: 11:09
  */
 
-namespace Isliang\Thrift\Framework;
+namespace Isliang\Thrift\Framework\Transport;
 
 use Isliang\Thrift\Framework\Request\Request;
 use Isliang\Thrift\Framework\Response\Response;
