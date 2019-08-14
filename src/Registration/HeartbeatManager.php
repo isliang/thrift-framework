@@ -9,7 +9,7 @@ namespace Isliang\Thrift\Framework\Registration;
 
 use Isliang\Thrift\Framework\Constant\CommonConst;
 
-class HeartBeatManager
+class HeartbeatManager
 {
     private $timer_id;
 

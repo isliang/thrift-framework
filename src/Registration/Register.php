@@ -12,7 +12,7 @@ use Isliang\Thrift\Framework\ThriftHttpServer;
 class Register
 {
     /**
-     * @var HeartBeatManager
+     * @var HeartbeatManager
      */
     private static $heart_beat_manager;
     /**
@@ -52,7 +52,7 @@ class Register
     public static function addProcess()
     {
         self::$process = new \swoole_process(function ($process) {
-            self::$heart_beat_manager = new HeartBeatManager(self::$register_client);
+            self::$heart_beat_manager = new HeartbeatManager(self::$register_client);
             self::$heart_beat_manager->registerServiceNode(self::$register_key);
             self::$heart_beat_manager->setStatus(true);
             self::$heart_beat_manager->start();

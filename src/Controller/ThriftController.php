@@ -36,6 +36,6 @@ class ThriftController
 
     public function handle()
     {
-        $this->launcher->run();
+        $this->launcher->handle($this->request, $this->response);
     }
 }

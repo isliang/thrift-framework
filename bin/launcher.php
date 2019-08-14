@@ -6,7 +6,7 @@
  * Time: 16:38
  */
 
-require_once dirname(__DIR__) . "/vendor/autoload.php";
+require_once dirname(__DIR__) . "/autoload.php";
 use \Isliang\Thrift\Framework\Config\RegisterConfig;
 use \Isliang\Thrift\Framework\ThriftHttpServer;
 

@@ -8,6 +8,7 @@
 
 namespace Isliang\Thrift\Framework;
 
+use Isliang\Thrift\Framework\Transport\TGuzzleTransport;
 use Thrift\Transport\TCurlClient;
 use Thrift\Transport\TBufferedTransport;
 use Thrift\Protocol\TBinaryProtocol;
