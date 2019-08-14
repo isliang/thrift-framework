@@ -8,6 +8,10 @@
 
 namespace Isliang\Thrift\Framework\Controller;
 
+use Isliang\Thrift\Framework\Request\Request;
+use Isliang\Thrift\Framework\Request\RequestFactory;
+use Isliang\Thrift\Framework\Response\Response;
+use Isliang\Thrift\Framework\Response\ResponseFactory;
 use Isliang\Thrift\Framework\ThriftServiceLauncher;
 
 class ThriftController
@@ -27,10 +31,15 @@ class ThriftController
      */
     private $launcher;
 
+    /**
+     * ThriftController constructor.
+     * @param $request \Swoole\Http\Request
+     * @param $response \Swoole\Http\Response
+     */
     public function __construct($request, $response)
     {
-        $this->request = $request;
-        $this->response = $response;
+        $this->request = RequestFactory::getRequest($request);
+        $this->response = ResponseFactory::getResponse($response);
         $this->launcher = new ThriftServiceLauncher();
     }
 

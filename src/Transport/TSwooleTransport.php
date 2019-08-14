@@ -8,8 +8,8 @@
 
 namespace Isliang\Thrift\Framework;
 
-use Swoole\Http\Request;
-use Swoole\Http\Response;
+use Isliang\Thrift\Framework\Request\Request;
+use Isliang\Thrift\Framework\Response\Response;
 use Thrift\Transport\TTransport;
 use Thrift\Transport\TTransportException;
 
@@ -32,7 +32,7 @@ class TSwooleTransport extends TTransport
     public function __construct($request, $response)
     {
         $this->response = $response;
-        $this->setBuf($request->rawContent());
+        $this->setBuf($request->content());
     }
 
     private function setBuf($buf)
