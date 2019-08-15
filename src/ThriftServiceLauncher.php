@@ -43,9 +43,10 @@ class ThriftServiceLauncher
         if ($pos = strpos($uri, '?')) {
             $uri = substr($uri, 0, $pos);
         }
-        ///service-order/listService => service\order\ListServiceImpl
+        ///service-order/listService => Service\Order\ListServiceImpl
         list(, $service_name, $module_name) = explode('/', $uri);
-        $namespace = preg_replace('/-/', '\\', $service_name) . '\\';
+        $namespace = preg_replace('/ /', '\\',
+                ucwords(preg_replace('/-/', ' ', $service_name))) . '\\';
         $impl = $namespace . ucfirst($module_name) . 'Impl';
 
         return [

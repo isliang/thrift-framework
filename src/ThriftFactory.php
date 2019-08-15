@@ -32,16 +32,13 @@ class ThriftFactory
         if (!empty(self::$sync_service[$classname])) {
             return self::$sync_service[$classname];
         }
-        $class_arr = explode('\\', trim($classname, '\\'));
-        $module_name = lcfirst(end($class_arr));
-        $class_arr = array_slice($class_arr, 0, -1);
-        $service_name = implode('-', $class_arr);
-        $uri = '/' . $service_name . '/' . $module_name;
+
+        $uri = self::buildUri($classname);
 
         $client_name = $classname . 'Client';
         $socket = new TCurlClient($endpoint['host'], $endpoint['port'], $uri);
         $transport = new TBufferedTransport($socket, 1024, 1024);
-        $protocol = new TBinaryProtocol($transport);
+        $protocol = new TBinaryProtocol($transport, true, true);
         $client = new $client_name($protocol);
         $proxy = new ThriftProxy($client, $classname);
 
@@ -67,11 +64,7 @@ class ThriftFactory
             return self::$async_service[$classname];
         }
 
-        $class_arr = explode('\\', trim($classname, '\\'));
-        $module_name = lcfirst(end($class_arr));
-        $class_arr = array_slice($class_arr, 0, -1);
-        $service_name = implode('-', $class_arr);
-        $uri = '/' . $service_name . '/' . $module_name;
+        $uri = self::buildUri($classname);
 
         $socket = new TGuzzleTransport($endpoint['host'], $endpoint['port'], $uri);
         $proxy = new ThriftPromiseProxy($socket, $classname);
@@ -79,5 +72,21 @@ class ThriftFactory
         self::$async_service[$classname] = $proxy;
 
         return $proxy;
+    }
+
+    /**
+     * @param $classname
+     * @return string
+     * Service\Order\ListServiceImpl => service-order/listService
+     */
+    private static function buildUri($classname)
+    {
+        $class_arr = explode('\\', trim($classname, '\\'));
+        $module_name = lcfirst(end($class_arr));
+        $class_arr = array_slice($class_arr, 0, -1);
+        $service_name = strtolower(implode('-', $class_arr));
+        $uri = '/' . $service_name . '/' . $module_name;
+
+        return $uri;
     }
 }
