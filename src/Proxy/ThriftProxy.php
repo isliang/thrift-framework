@@ -6,8 +6,9 @@
  * Time: 09:50
  */
 
-namespace Isliang\Thrift\Framework;
+namespace Isliang\Thrift\Framework\Proxy;
 
+use Isliang\Thrift\Framework\Config\LogConfig;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 
@@ -23,7 +24,7 @@ class ThriftProxy
         $this->classname = $classname;
         if (empty(self::$logger)) {
             self::$logger = new Logger('THRIFT-SERVICE');
-            self::$logger->pushHandler(new StreamHandler(Config::getLogFile(), Logger::INFO));
+            self::$logger->pushHandler(new StreamHandler(LogConfig::getLogFile(), Logger::INFO));
         }
     }
 

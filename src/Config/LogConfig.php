@@ -3,14 +3,13 @@
  * Created by PhpStorm.
  * User: yesuhuangsi
  * Date: 2019-08-12
- * Time: 10:04
+ * Time: 15:08
  */
 
-namespace Isliang\Thrift\Framework;
 
-use Isliang\Thrift\Framework\Exception\NoLogPathException;
+namespace Isliang\Thrift\Framework\Config;
 
-class Config
+class LogConfig
 {
     /**
      * @var string 日志存放目录

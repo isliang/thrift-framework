@@ -7,6 +7,7 @@
  */
 namespace Isliang\Thrift\Framework;
 
+use Thrift\Protocol\TBinaryProtocol;
 use Thrift\Type\TType;
 use Thrift\Type\TMessageType;
 use Thrift\Exception\TApplicationException;
@@ -22,6 +23,11 @@ class ThriftServiceProcessor
         $this->module_name = $module_name;
     }
 
+    /**
+     * @param $input TBinaryProtocol
+     * @param $output TBinaryProtocol
+     * @return bool
+     */
     public function process($input, $output)
     {
         $rseqid = 0;

@@ -8,10 +8,13 @@
 
 namespace Isliang\Thrift\Framework\Exception;
 
+use Isliang\Thrift\Framework\Constant\ExceptionConst;
+
 class NoLogPathException extends \Exception
 {
     public function __construct()
     {
-        parent::__construct("no log path set, use \Isliang\Thrift\Framework\Config::setLogPath to set", Constant::EXCEPTION_CODE_NOLOGPATH);
+        parent::__construct("no log path set, use \Isliang\Thrift\Framework\Config::setLogPath to set",
+            ExceptionConst::EXCEPTION_CODE_NO_LOG_PATH);
     }
 }

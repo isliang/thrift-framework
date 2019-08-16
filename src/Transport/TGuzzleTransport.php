@@ -6,7 +6,7 @@
  * Time: 16:56
  */
 
-namespace Isliang\Thrift\Framework;
+namespace Isliang\Thrift\Framework\Transport;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
