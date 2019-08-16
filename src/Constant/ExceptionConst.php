@@ -24,4 +24,9 @@ class ExceptionConst
      * 方法不存在
      */
     const EXCEPTION_METHOD_NOT_EXIST = 1003;
+
+    /**
+     * 节点注册配置有误
+     */
+    const EXCEPTION_REGISTER_CONFIG_ERROR = 1004;
 }

@@ -7,6 +7,8 @@
  */
 namespace Isliang\Thrift\Framework\Config;
 
+use Isliang\Thrift\Framework\Exception\RegisterConfigErrorException;
+
 /**
  * Class RegisterConfig
  * @package Isliang\Thrift\Framework\Config
@@ -50,6 +52,25 @@ class RegisterConfig
     private $env;
 
     /**
+     * RegisterConfig constructor.
+     * @param $config
+     * @throws RegisterConfigErrorException
+     */
+    public function __construct($config)
+    {
+        $this->setRegisterUrl($config['register_url']);
+        if ($service = $config['service']) {
+            $this->setHost($service['host']);
+            $this->setPort($service['port']);
+            $this->setScheme($service['scheme']);
+            $this->setServiceName($service['service_name']);
+            $this->setEnv($service['env']);
+            $this->setWeight($service['weight']);
+        }
+        $this->check();
+    }
+
+    /**
      * @return string
      */
     public function getRegisterUrl(): string
@@ -63,7 +84,9 @@ class RegisterConfig
      */
     public function setRegisterUrl(string $register_url)
     {
-        $this->register_url = $register_url;
+        if (!empty($register_url) && is_string($register_url)) {
+            $this->register_url = $register_url;
+        }
         return $this;
     }
 
@@ -81,7 +104,9 @@ class RegisterConfig
      */
     public function setHost(string $host)
     {
-        $this->host = $host;
+        if (!empty($host) && is_string($host)) {
+            $this->host = $host;
+        }
         return $this;
     }
 
@@ -99,7 +124,9 @@ class RegisterConfig
      */
     public function setPort(int $port)
     {
-        $this->port = $port;
+        if (!empty($port) && is_int($port)) {
+            $this->port = $port;
+        }
         return $this;
     }
 
@@ -117,7 +144,9 @@ class RegisterConfig
      */
     public function setWeight(int $weight)
     {
-        $this->weight = $weight;
+        if (!empty($weight) && is_int($weight)) {
+            $this->weight = $weight;
+        }
         return $this;
     }
 
@@ -135,7 +164,9 @@ class RegisterConfig
      */
     public function setServiceName(string $service_name)
     {
-        $this->service_name = $service_name;
+        if (!empty($service_name) && is_string($service_name)) {
+            $this->service_name = $service_name;
+        }
         return $this;
     }
 
@@ -153,7 +184,12 @@ class RegisterConfig
      */
     public function setScheme(string $scheme)
     {
-        $this->scheme = $scheme;
+        if (!empty($scheme) && is_string($scheme)) {
+            $scheme = strtolower($scheme);
+            if ($scheme == 'http' || $scheme == 'https') {
+                $this->scheme = $scheme;
+            }
+        }
         return $this;
     }
 
@@ -171,7 +207,22 @@ class RegisterConfig
      */
     public function setEnv(string $env)
     {
-        $this->env = $env;
+        if (!empty($env) && is_string($env)) {
+            $this->env = $env;
+        }
         return $this;
+    }
+
+    /**
+     * @throws RegisterConfigErrorException
+     */
+    public function check()
+    {
+        $vars = get_class_vars(self::class);
+        foreach ($vars as $var => $val) {
+            if (empty($this->$var)) {
+                throw new RegisterConfigErrorException($var);
+            }
+        }
     }
 }

@@ -8,6 +8,8 @@
 
 namespace Isliang\Thrift\Framework;
 
+use Isliang\Thrift\Framework\Proxy\ThriftPromiseProxy;
+use Isliang\Thrift\Framework\Proxy\ThriftProxy;
 use Isliang\Thrift\Framework\Transport\TGuzzleTransport;
 use Thrift\Transport\TCurlClient;
 use Thrift\Transport\TBufferedTransport;
@@ -17,6 +19,12 @@ class ThriftFactory
 {
     private static $sync_service = [];
     private static $async_service = [];
+    private static $endpoints = [];
+
+    public static function init($endpoints)
+    {
+        self::$endpoints = $endpoints;
+    }
     /**
      * @param $endpoint
      * @param $classname

@@ -4,6 +4,7 @@
  * User: yesuhuangsi
  * Date: 2019-08-12
  * Time: 16:38
+ * 服务注册 启动入口
  */
 
 $loader = __DIR__ . '/../vendor/autoload.php';
@@ -14,17 +15,19 @@ if (!file_exists($loader)) {
 
 require_once $loader;
 
+
+$config_file = '/data1/www/htdocs/config/thrift-service.php';
+
+if (!file_exists($config_file)) {
+    $config_file = __DIR__ . '/config.php';
+}
+
+$config = require_once $config_file;
+
 use \Isliang\Thrift\Framework\Config\RegisterConfig;
 use \Isliang\Thrift\Framework\ThriftHttpServer;
 
-$reg_config = new RegisterConfig();
-$reg_config->setRegisterUrl('http://127.0.0.1:2379')
-    ->setHost('127.0.0.1')
-    ->setPort(80)
-    ->setEnv('dev')
-    ->setServiceName('service-order')
-    ->setWeight(1)
-    ->setScheme('http');
+$reg_config = new RegisterConfig($config);
 
 $server = new ThriftHttpServer($reg_config);
 

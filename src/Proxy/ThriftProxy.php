@@ -6,7 +6,7 @@
  * Time: 09:50
  */
 
-namespace Isliang\Thrift\Framework;
+namespace Isliang\Thrift\Framework\Proxy;
 
 use Isliang\Thrift\Framework\Config\LogConfig;
 use Monolog\Handler\StreamHandler;
