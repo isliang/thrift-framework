@@ -18,7 +18,9 @@ return [
             $weight = 1;
             if (file_exists('/proc/cpuinfo')) {
                 preg_match('/cpu cores\t: (\d+)/', file_get_contents('/proc/cpuinfo'), $match);
-                $weight = $match[1];
+                if (!empty($match[1]) && is_int($match[1])) {
+                    $weight = $match;
+                }
             }
             return $weight;
         })(),//权重，初始化为cpu核心数
