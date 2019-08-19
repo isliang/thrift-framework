@@ -29,4 +29,14 @@ class ExceptionConst
      * 节点注册配置有误
      */
     const EXCEPTION_REGISTER_CONFIG_ERROR = 1004;
+
+    /**
+     * 文件没有写权限
+     */
+    const FILE_NOT_WRITABLE = 1005;
+
+    /**
+     * 文件不存在或没有读权限
+     */
+    const FILE_NOT_EXIST = 1006;
 }

@@ -29,4 +29,14 @@ class CommonConst
      * 服务节点状态 下线
      */
     const SERVICE_NODE_STATUS_DOWN = 'down';
+
+    /**
+     * 服务注册中心 服务注册的根节点
+     */
+    const REGISTER_CENTER_ROOT = 'service';
+
+    /**
+     * 节点信息文件更新 最长时间间隔
+     */
+    const DISCOVERY_FILE_UPDATE_INTERVAL = 600;
 }
