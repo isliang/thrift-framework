@@ -21,6 +21,11 @@ class CommonConst
     const TTL_HEARTBEAT = (self::EXPIRE_TIME_SERVICE_NODE * 1000 * 2)/3;
 
     /**
+     * 服务发现 节点更新检查时间间隔
+     */
+    const TTL_DISCOVERY = 10;
+
+    /**
      * 服务节点状态 运行
      */
     const SERVICE_NODE_STATUS_RUNNING = 'running';

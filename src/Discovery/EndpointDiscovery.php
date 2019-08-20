@@ -52,7 +52,7 @@ class EndpointDiscovery
 
     public function getServiceNodes()
     {
-        $this->timer_id = \Swoole\Timer::tick(CommonConst::TTL_HEARTBEAT, [$this, 'get']);
+        $this->timer_id = \Swoole\Timer::tick(CommonConst::TTL_DISCOVERY, [$this, 'get']);
         $this->stime = time();
     }
 
