@@ -7,7 +7,7 @@
  */
 
 return [
-    'register_url' => 'http://127.0.0.1:2379',//服务注册中心地址
+    'register_url' => 'http://192.168.199.234:2379',//服务注册中心地址
     'service' => [
         'host' => gethostbyname(gethostname()),//节点ip
         'port' => 80,//端口

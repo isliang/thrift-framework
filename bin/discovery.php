@@ -18,7 +18,7 @@ use \Isliang\Thrift\Framework\Discovery\EndpointDiscovery;
 
 
 $discovery = new EndpointDiscovery(
-    'http://127.0.0.1:2379',
+    'http://192.168.199.234:2379',
     '/data1/www/htdocs/config/nodes.json',
     'dev'
 );

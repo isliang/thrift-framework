@@ -62,7 +62,7 @@ class EndpointDiscovery
         $nodes = [];
         foreach ($res as $k => $v) {
             $value = json_decode($v, true);
-            if ($this->env == strtolower($value['env'])) {
+            if ($this->env == strtolower($value['env']) && $value['status'] == CommonConst::SERVICE_NODE_STATUS_RUNNING) {
                 $nodes[$value['service_name']][] = $value;
             }
         }
