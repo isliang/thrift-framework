@@ -14,6 +14,6 @@ class FileNotWritableException extends \Exception
     public function __construct($file)
     {
         parent::__construct("{$file} not writable",
-            ExceptionConst::FILE_NOT_WRITABLE);
+            ExceptionConst::EXCEPTION_FILE_NOT_WRITABLE);
     }
 }

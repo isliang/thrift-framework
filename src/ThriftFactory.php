@@ -8,6 +8,7 @@
 
 namespace Isliang\Thrift\Framework;
 
+use Isliang\Thrift\Framework\Discovery\EndpointLoader;
 use Isliang\Thrift\Framework\Proxy\ThriftPromiseProxy;
 use Isliang\Thrift\Framework\Proxy\ThriftProxy;
 use Isliang\Thrift\Framework\Transport\TGuzzleTransport;
@@ -19,19 +20,25 @@ class ThriftFactory
 {
     private static $sync_service = [];
     private static $async_service = [];
-    private static $endpoints = [];
+    /**
+     * @var EndpointLoader
+     */
+    private static $endpoint_loader;
 
-    public static function init($endpoints)
+    private static function init()
     {
-        self::$endpoints = $endpoints;
+        global $config;
+        if (empty($config['endpoint_config_file'])) {
+            throw new NoEndpointConfigError();
+        }
+        self::$endpoint_loader = new EndpointLoader($config['endpoint_config_file']);
     }
     /**
-     * @param $endpoint
      * @param $classname
      * @return ThriftProxy
      * \service\order\ListServiceIf => /service-order/listService
      */
-    public static function getService($endpoint, $classname)
+    public static function getService($classname)
     {
         if ('If' === substr($classname, -2)) {
             $classname = substr($classname, 0, -2);
@@ -40,11 +47,12 @@ class ThriftFactory
         if (!empty(self::$sync_service[$classname])) {
             return self::$sync_service[$classname];
         }
-
-        $uri = self::buildUri($classname);
+        self::init();
+        list($service_name, $uri) = self::buildUri($classname);
+        $endpoint = self::$endpoint_loader->getEndpoint($service_name);
 
         $client_name = $classname . 'Client';
-        $socket = new TCurlClient($endpoint['host'], $endpoint['port'], $uri);
+        $socket = new TCurlClient($endpoint['host'], $endpoint['port'], $uri, $endpoint['scheme']);
         $transport = new TBufferedTransport($socket, 1024, 1024);
         $protocol = new TBinaryProtocol($transport, true, true);
         $client = new $client_name($protocol);
@@ -57,12 +65,11 @@ class ThriftFactory
 
 
     /**
-     * @param $endpoint
      * @param $classname
      * @return ThriftPromiseProxy|mixed
      * 使用guzzle，支持异步
      */
-    public static function getAsyncService($endpoint, $classname)
+    public static function getAsyncService($classname)
     {
         if ('If' === substr($classname, -2)) {
             $classname = substr($classname, 0, -2);
@@ -71,10 +78,11 @@ class ThriftFactory
         if (!empty(self::$async_service[$classname])) {
             return self::$async_service[$classname];
         }
+        self::init();
+        list($service_name, $uri) = self::buildUri($classname);
+        $endpoint = self::$endpoint_loader->getEndpoint($service_name);
 
-        $uri = self::buildUri($classname);
-
-        $socket = new TGuzzleTransport($endpoint['host'], $endpoint['port'], $uri);
+        $socket = new TGuzzleTransport($endpoint['host'], $endpoint['port'], $uri, $endpoint['scheme']);
         $proxy = new ThriftPromiseProxy($socket, $classname);
 
         self::$async_service[$classname] = $proxy;
@@ -84,7 +92,7 @@ class ThriftFactory
 
     /**
      * @param $classname
-     * @return string
+     * @return array
      * Service\Order\ListServiceImpl => service-order/listService
      */
     private static function buildUri($classname)
@@ -95,6 +103,6 @@ class ThriftFactory
         $service_name = strtolower(implode('-', $class_arr));
         $uri = '/' . $service_name . '/' . $module_name;
 
-        return $uri;
+        return [$service_name, $uri];
     }
 }

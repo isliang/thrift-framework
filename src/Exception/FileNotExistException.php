@@ -15,6 +15,6 @@ class FileNotExistException extends \Exception
     public function __construct($file)
     {
         parent::__construct("{$file} not exist",
-            ExceptionConst::FILE_NOT_EXIST);
+            ExceptionConst::EXCEPTION_FILE_NOT_EXIST);
     }
 }

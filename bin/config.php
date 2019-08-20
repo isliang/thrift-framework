@@ -13,7 +13,7 @@ return [
         'port' => 80,//端口
         'scheme' => 'http',
         'env' => 'dev',//环境 dev-开发环境
-        'service_name' => 'service-order',//服务 service name
+        'service_name' => 'isliang-service-order',//服务 service name
         'weight' => (function() {
             $weight = 1;
             if (file_exists('/proc/cpuinfo')) {

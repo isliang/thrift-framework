@@ -8,8 +8,6 @@
 
 namespace Isliang\Thrift\Framework\Discovery;
 
-use Robin\WeightedRobin;
-
 class EndpointLoader
 {
     /**
@@ -27,11 +25,6 @@ class EndpointLoader
      */
     private $endpoint_list;
 
-    /**
-     * @var WeightedRobin
-     */
-    private static $load_balance;
-
     public function __construct($endpoint_config_file)
     {
         if (file_exists($endpoint_config_file) && is_readable($endpoint_config_file)) {
@@ -40,14 +33,17 @@ class EndpointLoader
         } else {
             throw new FileNotExistException($endpoint_config_file);
         }
-        self::$load_balance = new WeightedRobin();
     }
 
+    /**
+     * @param $service_name string 小写 多个单词中划线分隔
+     * @return string|null
+     */
     public function getEndpoint($service_name)
     {
         $this->loadEndpointList();
         if (!empty($this->endpoint_list[$service_name])) {
-            return self::$load_balance->next();
+            return LoadBalance::next($service_name);
         } else {
             return null;
         }
@@ -58,20 +54,21 @@ class EndpointLoader
         $md5 = md5_file($this->endpoint_config_file);
         if (empty($this->endpoint_list) || $this->md5 != $md5) {
             $this->md5 = $md5;
-            $endpoint_list = json_decode(file_get_contents($this->endpoint_config_file), true);
+            $file_type = pathinfo($this->endpoint_config_file)['extension'];
+            if ($file_type == 'php') {
+                //php file
+                //$config[$service-name] = ['scheme'=> '','host' => '', 'port' => '', 'weight' => '']
+                $endpoint_list = require_once $this->endpoint_config_file;
+            } else {
+                //json file
+                $endpoint_list = json_decode(file_get_contents($this->endpoint_config_file), true);
+            }
             foreach ($endpoint_list as $service_name => $value) {
                 foreach ($value as $v) {
-                    $endpoint = new Endpoint();
-                    $endpoint->setScheme($v['scheme'])
-                        ->setHost($v['host'])
-                        ->setPort($v['port'])
-                        ->setWeight($v['weight']);
-                    $this->endpoint_list[$service_name][$endpoint->__toString()] = $endpoint->getWeight();
+                    $this->endpoint_list[$service_name]["{$v['scheme']}://{$v['host']}:{$v['port']}"] = $v['weight'];
                 }
             }
-            foreach ($this->endpoint_list as $service_name => $value) {
-                self::$load_balance->init($this->endpoint_list);
-            }
+            LoadBalance::init($this->endpoint_list);
         }
     }
 }

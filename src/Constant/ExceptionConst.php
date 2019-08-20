@@ -33,10 +33,15 @@ class ExceptionConst
     /**
      * 文件没有写权限
      */
-    const FILE_NOT_WRITABLE = 1005;
+    const EXCEPTION_FILE_NOT_WRITABLE = 1005;
 
     /**
      * 文件不存在或没有读权限
      */
-    const FILE_NOT_EXIST = 1006;
+    const EXCEPTION_FILE_NOT_EXIST = 1006;
+
+    /**
+     * 服务端节点配置文件不存在 
+     */
+    const EXCEPTION_NO_ENDPOINT_CONFIG = 1007;
 }
