@@ -28,11 +28,11 @@ class ThriftFactory
     private static function init()
     {
         if (!self::$endpoint_loader) {
-            global $config;
-            if (empty($config['endpoint_config_file'])) {
+            global $global_config;
+            if (empty($global_config['endpoint_config_file'])) {
                 throw new NoEndpointConfigError();
             }
-            self::$endpoint_loader = new EndpointLoader($config['endpoint_config_file']);
+            self::$endpoint_loader = new EndpointLoader($global_config['endpoint_config_file']);
         }
     }
     /**
