@@ -160,7 +160,7 @@ print_r($client->getOrderListByUid(1)->wait()) ;
 基于swoole实现，由于 `Http\Server对Http协议的支持并不完整，建议仅作为应用服务器。并且在前端增加Nginx作为代理`，我们仍需要nginx的配合。在
 swoole\http\server启动时，新建一个swoole_process，用于将节点信息注册到注册中心，并维持健康检查。
 
-节点注册信息
+- 节点注册信息
     - key:service_name
     - value
         - scheme
