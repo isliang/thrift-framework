@@ -44,4 +44,9 @@ class ExceptionConst
      * 服务端节点配置文件不存在 
      */
     const EXCEPTION_NO_ENDPOINT_CONFIG = 1007;
+
+    /**
+     * 没有可用的服务注册中心
+     */
+    const EXCEPTION_REGISTER_SERVER_ERROR = 1008;
 }

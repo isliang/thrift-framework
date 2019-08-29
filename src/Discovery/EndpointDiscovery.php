@@ -10,6 +10,7 @@ namespace Isliang\Thrift\Framework\Discovery;
 use Isliang\Thrift\Framework\Constant\CommonConst;
 use Isliang\Thrift\Framework\Exception\FileNotWritableException;
 use LinkORB\Component\Etcd\Client;
+use Swoole\Mysql\Exception;
 
 class EndpointDiscovery
 {
@@ -39,15 +40,20 @@ class EndpointDiscovery
      */
     private $config_file;
 
+    private $register_servers;
+
+    private $root = CommonConst::REGISTER_CENTER_ROOT;
+
     public function __construct($etcd_server, $config_file, $env)
     {
         $this->etcd_client = new Client($etcd_server);
-        $this->etcd_client->setRoot(CommonConst::REGISTER_CENTER_ROOT);
+        $this->etcd_client->setRoot($this->root);
         if (!is_dir(dirname($config_file)) || !is_writable(dirname($config_file))) {
             throw new FileNotWritableException($config_file);
         }
         $this->config_file = $config_file;
         $this->env = strtolower($env);
+        $this->register_servers = [$etcd_server];
     }
 
     public function getServiceNodes()
@@ -58,6 +64,7 @@ class EndpointDiscovery
 
     public function get()
     {
+        $this->connect();
         $res = $this->etcd_client->getKeysValue();
         $nodes = [];
         foreach ($res as $k => $v) {
@@ -74,8 +81,44 @@ class EndpointDiscovery
         }
     }
 
+    private function connect()
+    {
+        $register_servers = [];
+        foreach ($this->register_servers as $server) {
+            try {
+                $this->etcd_client = new Client($server);
+                $register_servers = $this->getMembers();
+            } catch (Exception $e) {
+                $this->etcd_client = null;
+            }
+            $this->etcd_client->setRoot($this->root);
+        }
+        if (empty($this->etcd_client)) {
+            throw new RegisterServerException();
+        }
+        $this->register_servers = $register_servers;
+    }
+
+    private function getMembers()
+    {
+        $list = [];
+        $members = $this->etcd_client->getVersion('/v2/members');
+        if ($members['members']) {
+            foreach ($members['members'] as $member) {
+                if (!empty($member['clientURLs'])) {
+                    foreach ($member['clientURLs'] as $url) {
+                        $list[] = $url;
+                    }
+                }
+            }
+        }
+        return array_unique($list);
+    }
+
     public function __destruct()
     {
-        \Swoole\Timer::clear($this->timer_id);
+        if ($this->timer_id) {
+            \Swoole\Timer::clear($this->timer_id);
+        }
     }
 }
