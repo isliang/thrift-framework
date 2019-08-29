@@ -40,6 +40,7 @@ class LoadBalance
         } else {
             self::$index_list[$service_name] = 0;
         }
-        return self::$endpoint_list[$service_name][self::$index_list[$service_name]];
+        $url = self::$endpoint_list[$service_name][self::$index_list[$service_name]];
+        return parse_url($url);
     }
 }
