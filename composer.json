@@ -22,8 +22,7 @@
     "guzzlehttp/guzzle": "~6.0",
     "monolog/monolog": "^1.0",
     "nikic/fast-route": "^1.1.0",
-    "linkorb/etcd-php": "1.6.0",
-    "tinywan/load-balancing": "1.0.0"
+    "linkorb/etcd-php": "1.6.0"
   },
   "require-dev": {
     "eaglewu/swoole-ide-helper": "dev-master"

@@ -7,26 +7,39 @@
  */
 namespace Isliang\Thrift\Framework\Discovery;
 
-use Robin\WeightedRobin;
-
 class LoadBalance
 {
-    /**
-     * @var WeightedRobin[]
-     */
-    private static $load_balance;
+    private static $endpoint_list = [];
+    private static $index_list = [];
 
     public static function init($endpoint_list)
     {
         foreach ($endpoint_list as $service_name => $value) {
-            $load_balance = new WeightedRobin();
-            $load_balance->init($value);
-            self::$load_balance[$service_name] = $load_balance;
+            self::$endpoint_list[$service_name] = self::getEndpointListWithWeight($value);
         }
+    }
+
+    private static function getEndpointListWithWeight($endpoints)
+    {
+        $list = [];
+        foreach ($endpoints as $endpoint => $weight) {
+            $tmp = array_fill(0, $weight, $endpoint);
+            $list = array_merge($list, $tmp);
+        }
+        shuffle($list);
+        return $list;
     }
 
     public static function next($service_name)
     {
-        return parse_url(self::$load_balance[$service_name]->next());
+        if (isset(self::$index_list[$service_name])) {
+            self::$index_list[$service_name]++;
+            if (self::$index_list[$service_name] >= count(self::$endpoint_list[$service_name])) {
+                self::$index_list[$service_name] = 0;
+            }
+        } else {
+            self::$index_list[$service_name] = 0;
+        }
+        return self::$endpoint_list[$service_name][self::$index_list[$service_name]];
     }
 }
