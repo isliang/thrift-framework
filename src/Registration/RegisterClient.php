@@ -11,6 +11,7 @@ namespace Isliang\Thrift\Framework\Registration;
 use Isliang\Thrift\Framework\Constant\CommonConst;
 use \LinkORB\Component\Etcd\Client;
 use LinkORB\Component\Etcd\Exception\KeyNotFoundException;
+use Swoole\Mysql\Exception;
 
 class RegisterClient
 {
@@ -19,10 +20,15 @@ class RegisterClient
      */
     private $etcd_client;
 
+    private $register_servers;
+
+    private $root = CommonConst::REGISTER_CENTER_ROOT;
+
     public function __construct($etcd_server)
     {
         $this->etcd_client = new Client($etcd_server);
-        $this->etcd_client->setRoot('service');
+        $this->etcd_client->setRoot($this->root);
+        $this->register_servers = [$etcd_server];
     }
 
     /**
@@ -31,6 +37,7 @@ class RegisterClient
      */
     public function register(ServiceNode $service_node)
     {
+        $this->connect();
         $service_node->setStatus(CommonConst::SERVICE_NODE_STATUS_RUNNING);
         $value = $this->getValue($service_node->getRegisterKey());
         if ($value) {
@@ -50,6 +57,40 @@ class RegisterClient
                 CommonConst::EXPIRE_TIME_SERVICE_NODE
             );
         }
+    }
+
+    private function connect()
+    {
+        $register_servers = [];
+        foreach ($this->register_servers as $server) {
+            try {
+                $this->etcd_client = new Client($server);
+                $register_servers = $this->getMembers();
+            } catch (Exception $e) {
+                $this->etcd_client = null;
+            }
+            $this->etcd_client->setRoot($this->root);
+        }
+        if (empty($this->etcd_client)) {
+            throw new RegisterServerException();
+        }
+        $this->register_servers = $register_servers;
+    }
+
+    private function getMembers()
+    {
+        $list = [];
+        $members = $this->etcd_client->getVersion('/v2/members');
+        if ($members['members']) {
+            foreach ($members['members'] as $member) {
+                if (!empty($member['clientURLs'])) {
+                    foreach ($member['clientURLs'] as $url) {
+                        $list[] = $url;
+                    }
+                }
+            }
+        }
+        return array_unique($list);
     }
 
     /**
@@ -72,6 +113,7 @@ class RegisterClient
      */
     public function unRegister($key)
     {
+        $this->connect();
         $old_value = $this->getValue($key);
         if ($old_value) {
             $value = json_decode($old_value, true);
@@ -91,6 +133,7 @@ class RegisterClient
      */
     public function checkPass($key)
     {
+        $this->connect();
         $value = $this->getValue($key);
         if ($value) {
             $this->etcd_client->update(
@@ -108,6 +151,7 @@ class RegisterClient
      */
     public function checkFail($key)
     {
+        $this->connect();
         $value = $this->getValue($key);
         if ($value) {
             $value = json_decode($value, true);

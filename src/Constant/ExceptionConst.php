@@ -29,4 +29,24 @@ class ExceptionConst
      * 节点注册配置有误
      */
     const EXCEPTION_REGISTER_CONFIG_ERROR = 1004;
+
+    /**
+     * 文件没有写权限
+     */
+    const EXCEPTION_FILE_NOT_WRITABLE = 1005;
+
+    /**
+     * 文件不存在或没有读权限
+     */
+    const EXCEPTION_FILE_NOT_EXIST = 1006;
+
+    /**
+     * 服务端节点配置文件不存在 
+     */
+    const EXCEPTION_NO_ENDPOINT_CONFIG = 1007;
+
+    /**
+     * 没有可用的服务注册中心
+     */
+    const EXCEPTION_REGISTER_SERVER_ERROR = 1008;
 }

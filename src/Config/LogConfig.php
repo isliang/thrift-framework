@@ -27,7 +27,11 @@ class LogConfig
     private static function getLogPath(): string
     {
         if (empty(self::$log_path)) {
-            throw new NoLogPathException();
+            global $global_config;
+            if (empty($global_config['log_path'])) {
+                throw new NoLogPathException();
+            }
+            self::$log_path = $global_config['log_path'];
         }
         return self::$log_path;
     }
