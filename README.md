@@ -1,3 +1,7 @@
+[![Latest Stable Version](https://poser.pugx.org/isliang/thrift-framework/v/stable)](https://packagist.org/packages/isliang/thrift-framework)
+[![Total Downloads](https://poser.pugx.org/isliang/thrift-framework/downloads)](https://packagist.org/packages/isliang/thrift-framework)
+[![License](https://poser.pugx.org/isliang/thrift-framework/license)](https://packagist.org/packages/isliang/thrift-framework)
+
 ### 说明
 
 这是一个简单的php thrift框架，基于apache官方提供的lib，并在不断完善中...
